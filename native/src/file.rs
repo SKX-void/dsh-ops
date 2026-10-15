@@ -311,6 +311,6 @@ fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
         return Err(Failure::new("ACCESS_DENIED", format!("Atomic replacement publish: {error}")));
     }
     #[cfg(unix)]
-    parent.try_clone()?.into_std_file().sync_all()?;
+    crate::sync_directory(&parent)?;
     Ok(())
 }

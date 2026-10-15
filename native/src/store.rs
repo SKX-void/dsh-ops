@@ -146,7 +146,7 @@ impl Store {
             .rename(&temporary, &self.dir, format!("{id}.{generation:06}.json"))?;
         // Persist directory entries where the platform supports directory fsync.
         #[cfg(unix)]
-        self.dir.try_clone()?.into_std_file().sync_all()?;
+        crate::sync_directory(&self.dir)?;
         Ok(())
     }
     pub fn release(&self, id: &str) -> Result<()> {
