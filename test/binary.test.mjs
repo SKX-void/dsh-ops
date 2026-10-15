@@ -34,6 +34,9 @@ import { assert, report, test, withTempDir } from './lib/harness.mjs'
 function seed(file, contents = 'stub') {
   fs.mkdirSync(path.dirname(file), { recursive: true })
   fs.writeFileSync(file, contents)
+  // Windows executability is an extension fact; elsewhere a seeded candidate
+  // must carry the execute bit to stand in for a real binary.
+  if (process.platform !== 'win32') fs.chmodSync(file, 0o755)
   return file
 }
 
@@ -322,7 +325,7 @@ await test('a bundled package without its executable is reported, then searched 
 await test('the managed copy and the vendored build still outrank both packages', async () => {
   await withTempDir('own-package-order', async (dir) => {
     const env = { DSH_HOME: path.join(dir, 'home') }
-    const managed = seed(managedBinaryFile({ env }))
+    const managed = seed(managedBinaryFile({ env, platform: FORGED.platform }))
     const built = seed(path.join(dir, 'vendor', 'fastctx', 'target', 'release', FORGED.executable))
     const ours = stageOwnPackage(dir)
     const upstream = stageUpstreamPackage(dir)

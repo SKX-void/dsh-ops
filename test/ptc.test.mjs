@@ -208,12 +208,16 @@ try {
   fs.copyFileSync('package.json',path.join(isolatedPackage,'package.json'))
   const runtimeDir = path.resolve('runtime',`${process.platform}-${process.arch}`)
   fs.cpSync(runtimeDir,path.join(isolatedPackage,'runtime',`${process.platform}-${process.arch}`),{recursive:true})
-  assert.throws(() => resolveWorker({}, {platform:'linux',arch:'x64'}), /Windows x64 only/)
-  assert.throws(() => resolveWorker({}, {platform:'win32',arch:'arm64'}), /Windows x64 only/)
+  assert.throws(() => resolveWorker({}, {platform:'linux',arch:'arm64'}), /Windows x64 and Linux x64 only/)
+  assert.throws(() => resolveWorker({}, {platform:'win32',arch:'arm64'}), /Windows x64 and Linux x64 only/)
   assert.ok(resolveWorker({}, {packageRoot:isolatedPackage}).startsWith(isolatedPackage))
   console.log('ok: installed runtime resolves without binaryPath or source build tree')
   const real = new Context(); real.logger.level = 0
-  const outside = fs.mkdtempSync(path.join(os.tmpdir(),'ops-outside-'))
+  // The local sandbox grants the platform temporary area on Linux, so the
+  // outside-workspace fixture must sit outside that area as well as the root.
+  const outside = process.platform === 'win32'
+    ? fs.mkdtempSync(path.join(os.tmpdir(),'ops-outside-'))
+    : fs.mkdtempSync(path.join(path.resolve('.'),'.tmp-outside-'))
   const external = path.join(outside,'protected.txt'); fs.writeFileSync(external,'keep')
   try {
     await real.plugin(Subprocess)
@@ -231,7 +235,9 @@ try {
     assert.deepEqual(fs.readdirSync(path.join(dir,'.dsh-ops')).sort(),beforeStore)
     agent.session.mode='workspace-write'
     const denied=await call('batch',{root:outside,action:'run',operations:[{op:'remove',path:'protected.txt'}]})
-    assert.equal(denied.status,'error',JSON.stringify(denied)); assert.ok(fs.existsSync(external))
+    assert.equal(denied.status === 'error' || denied.status === 'rejected',true,JSON.stringify(denied))
+    assert.equal(denied.error?.code ?? denied.permission?.code,'POLICY_DENIED',JSON.stringify(denied))
+    assert.ok(fs.existsSync(external))
     agent.session.mode='danger-full-access'
     const unrestricted=await call('batch',{root:outside,action:'run',operations:[{op:'remove',path:'protected.txt'}]})
     assert.equal(unrestricted.status,'completed',JSON.stringify(unrestricted)); assert.equal(fs.existsSync(external),false)

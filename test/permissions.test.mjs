@@ -36,7 +36,11 @@ await test('preparation coalesces one trusted workspace and retries only failed 
 })
 await test('owned Modify-only workspace starts real DSH sandbox; three modes and explicit denials', async () => {
   await withTempDir('permission-matrix',async root => {
-    const outside=path.join(path.dirname(root),'permission-outside-'+path.basename(root))
+    // The local sandbox grants the platform temporary area on Linux, so a
+    // non-Windows denial must be probed outside both the workspace and it.
+    const outside = process.platform === 'win32'
+      ? path.join(path.dirname(root),'permission-outside-'+path.basename(root))
+      : path.join(path.resolve('.'),'.tmp-permission-outside-'+path.basename(root))
     fs.mkdirSync(outside); fs.writeFileSync(path.join(outside,'keep.txt'),'outside')
     fs.writeFileSync(path.join(root,'data.txt'),'before')
     // Strip broad inherited grants only on this test-owned directory. Recreate
