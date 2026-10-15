@@ -108,7 +108,7 @@
         "id": "dsh-ops-ptc",
         "entry": "dsh-ops/ptc",
         "defaultEnabled": false,
-        "platforms": ["win32"],
+        "platforms": ["win32", "linux"],
         "architectures": ["x64"],
         "presentation": "PTC-only",
         "runtime": "independent native Rust file worker; no FastCtx dependency",

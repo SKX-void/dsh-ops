@@ -8,7 +8,7 @@ attention wasted on repeated PowerShell errors.
 
 > tips: "ops" here is short for the general sense of operations — the plugin sits at the base layer between dsh and system / code / file operations. It is not an operations (DevOps) plugin.
 
-**0.3.0 supports Windows x64 only**, targeting DSH `0.2.0-rc.2`. The independent Rust file/PTC worker is included; PTC remains opt-in. Linux/macOS/ARM64 are future work, not release claims. See [Native PTC](docs/native-ptc.md).
+**0.3.0 supports Windows x64 and Linux x64**, targeting DSH `0.2.0-rc.2`. The independent Rust file/PTC worker ships for each supported platform (`runtime/<platform>-<arch>/`); PTC remains opt-in. macOS/ARM64 are future work, not release claims, and the shell component (`ops_bash`/pwsh) stays Windows-only. See [Native PTC](docs/native-ptc.md).
 
 ---
 
@@ -42,7 +42,7 @@ Routing: **toolkit → bash → PowerShell 7**.
 ### Prerequisites
 
 - **Node.js `^22.19 || >=24`** (the `engines` requirement in `package.json`)
-- Windows x64
+- Windows x64 or Linux x64 (the shell component's `ops_bash`/pwsh is Windows-only)
 - The target DSH application initialized
 
 ### Install
