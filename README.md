@@ -7,7 +7,7 @@ Windows DSH 的性能工具插件：提供独立 bash / PowerShell 7，并用 Ru
 
 > tips：本项目的 ops 是广义 operations（运行操作）的缩写，代指本插件处于 dsh 和系统/代码/文件操作的基础工具位置。本项目不是 operations（运维）插件。
 
-**0.3.0 仅支持 Windows x64**，目标宿主 DSH `0.2.0-rc.2`。原生 Rust 文件/PTC worker 随包携带；PTC 默认关闭，须显式启用。Linux/macOS/ARM64 留待后续版本。见 [PTC 设计与使用](docs/native-ptc.md)。
+**0.3.0 支持 Windows x64 与 Linux x64**，目标宿主 DSH `0.2.0-rc.2`。原生 Rust 文件/PTC worker 随包携带（各平台各自的 `runtime/<platform>-<arch>/`）；PTC 默认关闭，须显式启用。macOS/ARM64 留待后续版本；`ops_bash`/pwsh 所在的 shell 组件仍仅限 Windows。见 [PTC 设计与使用](docs/native-ptc.md)。
 
 有问题可以加qq群：1127808570
 
@@ -42,7 +42,7 @@ Windows DSH 的性能工具插件：提供独立 bash / PowerShell 7，并用 Ru
 ### 前置条件
 
 - **Node.js `^22.19 || >=24`**（`package.json` 的 `engines` 要求）
-- Windows x64
+- Windows x64 或 Linux x64（shell 组件的 `ops_bash`/pwsh 仅 Windows）
 - 目标 DSH 应用已初始化
 
 ### 安装

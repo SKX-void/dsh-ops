@@ -8,7 +8,7 @@ The complete install, update and remove flow, plus every option of the command-l
 
 | Item | Requirement |
 | --- | --- |
-| OS | Windows x64 |
+| OS | Windows x64 or Linux x64 (shell tools: Windows only) |
 | Node.js | `^22.19 \|\| >=24` (the `engines` field in `package.json`) |
 | Host | DSH `0.2.0-rc.2` |
 | Target application | Initialized |
